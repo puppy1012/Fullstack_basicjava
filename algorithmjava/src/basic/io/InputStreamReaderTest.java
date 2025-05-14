@@ -8,8 +8,8 @@ import java.io.InputStreamReader;
 //~~~InputStream의 최상위 클래스
 public class InputStreamReaderTest {
 	public static void main(String[] args) {
-		InputStream myin =System.in;
-		InputStreamReader reader=new InputStreamReader(myin);
+//		InputStream myin =System.in;
+		InputStreamReader reader=new InputStreamReader(System.in);
 		try {
 			while(true) {
 				
