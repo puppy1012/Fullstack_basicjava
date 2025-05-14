@@ -1,0 +1,9 @@
+/**
+ * 
+ */
+/**
+ * @author puppy
+ *
+ */
+module algorithmjava {
+}

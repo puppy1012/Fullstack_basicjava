@@ -11,15 +11,10 @@ public class TVFactory extends Factory implements IWorkingTogether{
 	public int makeProducts(char skill) {
 		// TODO Auto-generated method stub
 		int num;
-		if(skill=='A') {
-			num=8;
-		}else if(skill=='B') {
-			num=5;
-		}else if(skill=='C') {
-			num=3;
-		}else {
-			num=1;
-		}
+		if(skill=='A') {num=8;}
+		else if(skill=='B') {num=5;}
+		else if(skill=='C') {num=3;}
+		else {num=1;}
 		return num*getWorkingTime();
 	}
 

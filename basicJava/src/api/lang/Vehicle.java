@@ -21,12 +21,15 @@ public class Vehicle {
 	}
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null | this.getClass() != obj.getClass())
-			return false;
-		Vehicle vehicle = (Vehicle) obj;
-		return owner.equals(vehicle.owner);
+		if (this == obj)return true;
+		if (obj == null | this.getClass() != obj.getClass())return false;
+		if(obj instanceof Vehicle) {
+			Vehicle vehicle = (Vehicle) obj;
+			if(this.owner.equals(vehicle.owner)) {
+				return true;
+			}
+		}
+		return false;
 	}
 	@Override
 	public String toString() {
