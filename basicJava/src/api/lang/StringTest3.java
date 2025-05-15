@@ -9,6 +9,9 @@ public class StringTest3 {
 		System.out.println("str1.indexOf('a')=>"+str1.indexOf('a'));
 		System.out.println("str1.indexOf(\"a\")=>"+str1.indexOf("a"));
 		System.out.println("str1.indexOf(\"ÀÚ\")=>"+str1.indexOf("ÀÚ"));
+		System.out.println("str1.indexOf(\"pr\",0)=>"+str1.indexOf("pr",0));
+
+		System.out.println("str1.indexOf(\"pr\",8)=>"+str1.indexOf("pr",8));
 		System.out.println("str1.lastIndexOf('a')=>"+str1.lastIndexOf('a'));
 		System.out.println("str1.lastIndexOf(\"a\")=>"+str1.lastIndexOf("a"));
 		
