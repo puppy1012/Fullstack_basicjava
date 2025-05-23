@@ -6,5 +6,7 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="C:/fullstack10/tool/mysql-connector-j-8.0.33/mysql-connector-j-8.0.33.jar"/>
+	<classpathentry kind="lib" path="C:/fullstack10/tool/ojdbc11.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
