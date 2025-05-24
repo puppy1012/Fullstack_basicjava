@@ -11,7 +11,7 @@ public class LoginTest {
 		String url="jdbc:mysql://127.0.0.1:3306/shop?serverTimezone=UTC";
 		String user="shop";
 		String password="shop";
-		String sql="select id,pass from customer where id='bts1' and pass='1234'";
+		String sql="select * from customer where id='bts1' and pass='1234'";
 //		boolean found=false;
 		try {
 			//1.드라이버 로딩
