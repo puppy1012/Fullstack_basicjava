@@ -1,0 +1,153 @@
+package jdbc.customer;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+//Customer테이블을 엑세스하는 모든 기능을 구현
+public class CustomerDAOImpl {
+	// 회원등록
+	public int insert(CustomerDTO customer) {
+		String sql = "insert into customer values(?,?,?,?,sysdate())";
+		Connection con = null;
+		PreparedStatement ptmt = null;
+		int result = 0;
+		try {
+			con = DBUtil.getConnection();
+			System.out.println("연결성공" + con);
+			ptmt = con.prepareStatement(sql);
+			System.out.println("Statement객체생성=>" + ptmt);
+			ptmt.setString(1, customer.getId());
+			ptmt.setString(2, customer.getPass());
+			ptmt.setString(3, customer.getName());
+			ptmt.setString(4, customer.getAddr());
+			result = ptmt.executeUpdate();
+			System.out.println(result + "개 행 삽입성공");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(null, ptmt, con);
+		}
+		return result;
+	}
+
+	// 로그인메소드
+	public String Login(String id, String pass) {
+		String sql = "select * from customer where id=? and pass=?";
+		String result = null;
+		try (Connection con = DBUtil.getConnection(); PreparedStatement pstmt = con.prepareStatement(sql);) {
+			pstmt.setString(1, id);
+			pstmt.setString(2, pass);
+			try (ResultSet rs = pstmt.executeQuery();) {
+				if (rs.next()) {
+					System.out.println("로그인성공");
+					result = rs.getString(1);
+				} else {
+					System.out.println("로그인실패");
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			return result;
+		}
+
+	}
+
+	public String Update(String id, String addr) {
+		String sql = "update customer set addr=? where id=?";
+		String result = null;
+		try (Connection con = DBUtil.getConnection(); PreparedStatement pstmt = con.prepareStatement(sql);) {
+			pstmt.setString(1, addr);
+			pstmt.setString(2, id);
+			int rs = pstmt.executeUpdate();
+			// 5.실행결과 처리
+			if (rs > 0) {
+				result = rs + "개 update 성공";
+			} else {
+				result = rs + "개 update 실패";
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			return result;
+		}
+		// 실무에서는 미리커넥션을 만들어놓고 요청이 들어오면 쳐내는형식
+	}
+
+	// 회원탈퇴
+	public int delete(String id) {
+		String sql = "delete from customer where id=? ";
+		int result = 0;
+		try (// 2.DBMS에 접속
+				Connection con = DBUtil.getConnection();
+				// 3. SQL문을 실행하기 위한 객체를 생성
+				PreparedStatement ptmt = con.prepareStatement(sql);) {
+			ptmt.setString(1, id);
+			// 4. SQL문 실행
+			int rs = ptmt.executeUpdate();
+			// 5.실행결과 처리
+			result = rs;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			return result;
+		}
+	}
+
+	// 회원 전체목록 조회
+	public ArrayList<CustomerDTO> findByArr(String addr) {
+		String sql = "select * from customer where addr=?";
+		// 조회된 Customer 테이블의 모든 데이터를 담아서 리턴할 자료구조
+		ArrayList<CustomerDTO> customerlist = new ArrayList<CustomerDTO>();
+		try (Connection con = DBUtil.getConnection(); PreparedStatement pstmt = con.prepareStatement(sql);) {
+			pstmt.setString(1, addr);
+			ResultSet rs = pstmt.executeQuery();
+			ResultSetMetaData rsmd = rs.getMetaData();
+			int columnCount = rsmd.getColumnCount();
+			while (rs.next()) {
+				CustomerDTO customer = new CustomerDTO(rs.getString(1), rs.getString(2), rs.getString(3),
+						rs.getString(4), rs.getDate(5));
+				customerlist.add(customer);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			return customerlist;
+		}
+	}
+
+	// 회원 전체목록 조회
+	// 레코드를 DTO로 변환해서 ArrayList에 담아서 리턴
+	public ArrayList<CustomerDTO> Select() {
+		String sql = "select * from customer";
+		// 조회된 Customer 테이블의 모든 데이터를 담아서 리턴할 자료구조
+		ArrayList<CustomerDTO> customerlist = new ArrayList<CustomerDTO>();
+		try (// 2.DBMS에 접속
+				Connection con = DBUtil.getConnection();
+				// 3. SQL문을 실행하기 위한 객체를 생성
+				PreparedStatement pstmt = con.prepareStatement(sql);) {
+			// 4. SQL문 실행
+			ResultSet rs = pstmt.executeQuery();
+			// 모든 데이터에 접근을 하는게 아니라 sql문에서부터 조건을 걸어라
+			while (rs.next()) {
+				CustomerDTO customer = new CustomerDTO(rs.getString(1), rs.getString(2), rs.getString(3),
+						rs.getString(4), rs.getDate(5));
+				customerlist.add(customer);
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			return customerlist;
+		}
+
+	}
+
+}

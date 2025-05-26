@@ -89,6 +89,7 @@ JDBC(Java Database Connectivity)
 		Statement stmt= con.createStatement();
 		=>어떤 DBMS의 드라이버를 로딩했냐에 따라 다른 Statement객체를 리턴
 		
+	//25.05.26	
 	2) PreparedStatement객체를 활용
 	
 4. SQL문을 실행
@@ -103,6 +104,33 @@ JDBC(Java Database Connectivity)
 			ReusltSet rs= stmt.executeQuery(sql);
 		
 	2)PreparedStatement객체를 활용
+		-sql문을 미리 컴파일한 후(파싱) 실행시점에 전달되는 값을 연결해서 실행
+		-Connection클래스의 pareparedStatement메소드를 이용해서 생성
+		[SQL문 실행]
+		1. 쿼리분석
+		2. 컴파일
+		3. 실행
+		
+		-Statement는 SQL문을 실행하는 과정에서 매번 3단계의 내용을 처리
+		-PreparedStatement는 한번만 작업하고 캐시에 넣은 후 캐시에서 꺼내서 사용
+		-PreparedStatement객체가 SQL문을 실행하는 방식은 SQL문을 미리 파싱한 후에
+		외부에서 입력받아야 하는 값들은 실행할때 전달 받아 SQL문이 실행될 수 있도록 작업
+		
+		[작업순서]
+		1.SQL문을 미리 파싱할수 있도록 외부에서 입력받아야 하는 값이 연결될 부분을 ?로 대체해서 SQL문을 정의
+		String sql="insert into customer values(?,?,?,?,sysdata())"
+												---------
+												매개변수가 전달될부분을?로 처리
+		=> ?에는 필드가 올 수 없고 무조건 값에만 ?를 추가할 수 있다.(컬럼명은 ?로 처리 못함)
+		=>순수한 값만 올 수 있다.)기호는 사용할 수 없다.)
+		2.PreparedStatement객체가 생성될때 sql문을 매개변수로 넘긴다.
+		 =>sql문이 미리 파싱되어 컴파일될 수 있도록 작업
+		3.PreparedStatement의 setXXX메소드를 이용해서 ?에 값을 셋팅한다.
+		- 외부에서 입력받을 값을 ?처리하고 ?에 값을 설정하는 처리
+		- setXXX메소드는 데이터타입에 따라서 다르게 설정(REsultSet의 getXXX메소드와 동일하게)
+		  ptmt.setXXXX(1,"jang") => 첫번째 ?자리에 jang을 셋팅하겠다는 의미
+		  			   --------
+		  			   ?의 순서 ?에 셋팅할 값( ?는 1부터 시작)
 5. 실행결과 처리
 	1) insert,delete,update
 		-변경한 레코드의 갯수를 리턴하므로 동일한 방법으로 처리
@@ -127,8 +155,45 @@ JDBC(Java Database Connectivity)
 			-MySQL의 타입이 int ... 			   : getInt(1), getInt("컬럼명")
 			-MySQL의 타입이 Date ... 		   : getDate(1), getDate("reg_date")
 6. 자원반납
-
-7.미션
+	-클라이언트가 점유해서 사용하던 자원을 반납
+	-ReusltSet -> Statement ->Connection순서로 반납
+	-각 객체의 close메소드를 이용해서 반납
+	-만들어진 순서가 아니라 가장 마지막에 생성된 객체부터 반납(재귀형식)
+	
+	
+7.DAO(Data Access Object)
+	- 복잡한 시스템에서는 하나의 클래스에 모든 처리를 다 정의하고 작업하지않는다.
+	- 각 역할을 담당하는 객체를 따로 정의하고 작업
+	- DBMS와 직접적으로 통신을 하는 역할을 담당하는 객체를 정의하고 작업
+	- DBMS와 연결해서 CLRUD(CRUD)작업을 수행하는 모든 코드를 DAO에만 정의한다.
+	- 계층구조(웹을 개발하기 위한 구조)에서 화면설계, 비지니스로직,DBMS연동하는 역할을 분리하는 경우 사용
+	- 각각의 역할을 분리해놓으면 유지보수 및 확장성이 좋다.
+	- MyBatis나 JPA로 가면 Mapper나 REpository라는 용어를 사용
+	
+	테이블명DAO
+		^
+		|
+		|
+	테이블명 DAO Implements
+	
+View -> controller -> service -> dao ->DBMS
+					----------	------
+					       트랜잭션
+					상위 인터페이스 필요	//
+					
+	-계층구조(웹에서 개발할 기본구조 -Layered Architecture)에서 각계층별로 데이터 전송해야하는데
+	보통 테이블의 한 Row에 해당하는 데이터를 주고 받는다.
+	테이블의 한 row에 해당하는 데이터를 각각 전달하지않고 자바 객체로 만들어서 주고받는다.
+	이를 DTO라고 한다.
+	  -----
+	  Data Transfer Object : 레코드를 객체로 변환					
+					
+	- ResultSet,Statement와 같은 JDBC코드는 DAO에만 정의되어야만 한다.
+	- DAO에서 발생한 ResultSet을 다른 객체로 넘기는 경우에는 데이터를 변환해서 전달해야한다.
+	=> 레코드를 이용해서 DTO를 생성하고 생성된 DTO가 여러개인 경우에는 ArrayList에 담는다.
+					
+					
+8.미션
 	1)Update테스트
 		- InsertTest.java를 UpdateTest.java로 rename하기
 		- sql문만 변경하고 실행하기
@@ -146,3 +211,17 @@ JDBC(Java Database Connectivity)
 		-LoginTest.java작성
 		-sql문은 id가 bts1,password가 1234인 레코드가 있으면 "로그인성공"출력하기
 		-사용자가 없으면 "로그인실패"출력
+		
+	4)LoginTest를 InsertTest처럼 변경하기
+		-LoginTest.java를 PreparedLoginTest.java로 변경
+		-메소드로 분리
+		-id와 pass를 변수로 변경해서 테스트가 가능하도록 처리
+		-preparedInsertTest와 동일하게 변경
+		
+	5)UpdateTest, DeleteTest, SelectTest를 PreparedStatement로 변경
+		-파일을 rename하고 작업
+		-PreparedUpdateTest,PreparedDeleteTest,PreparedSelectTest로 변경하고 작업
+		-모두 PreparedStatement를 이용해서 작업하도록 변경
+		-?에 대한 값이 없으면 셋팅하지않고 그냥 executeUpdate()나 executeQuery()실행하면된다
+		-변경후 테스트 완료되면 제출
+		
