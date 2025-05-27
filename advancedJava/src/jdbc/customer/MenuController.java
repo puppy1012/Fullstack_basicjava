@@ -81,14 +81,14 @@ public class MenuController {
 		String id = key.next();
 		System.out.print("패스워드:");
 		String pass = key.next();
-//		String loginUser=dao.Login(id, pass);
-//		//로그인 성공하면 로그인성공!!메시지와 로그인한 사용자의 모든 정보를 출력(print호출)
-//		if(loginUser!=null) {
-//			System.out.println("로그인성공");
-//			print(loginUser);
-//		}else {
-//			System.out.println("로그인실패");
-//		}
+		CustomerDTO loginUser=dao.Login(id, pass);
+		//로그인 성공하면 로그인성공!!메시지와 로그인한 사용자의 모든 정보를 출력(print호출)
+		if(loginUser!=null) {
+			System.out.println("로그인성공");
+			print(loginUser);
+		}else {
+			System.out.println("로그인실패");
+		}
 		//로그인 실패하면 로그인실패!!메시지를 출력
 	}
 	public void selectMenu(){
@@ -115,14 +115,14 @@ public class MenuController {
 //			print(user);
 //		}
 	}
-//	public void print(MemberDTO user) {
-//		System.out.print(user.getId()+"\t");
-//		System.out.print(user.getPass()+"\t");
-//		System.out.print(user.getName()+"\t");
-//		System.out.print(user.getAddr()+"\t");
-//		System.out.print(user.getRegDate()+"\t");
-//	
-//	}
+	public void print(CustomerDTO user) {
+		System.out.print(user.getId()+"\t");
+		System.out.print(user.getPass()+"\t");
+		System.out.print(user.getName()+"\t");
+		System.out.print(user.getAddr()+"\t");
+		System.out.print(user.getRegDate()+"\t");
+	
+	}
 	
 	
 }

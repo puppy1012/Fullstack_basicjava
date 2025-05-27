@@ -36,24 +36,24 @@ public class CustomerDAOImpl {
 	}
 
 	// 로그인메소드
-	public String Login(String id, String pass) {
+	//pk로 비교한 경우에는 무조건 조회된 레코드는 1개 - 레코드 1개만 리턴되므로 DTO로 변환해서 리턴하는것이 일반적
+	public CustomerDTO Login(String id, String pass) {
 		String sql = "select * from customer where id=? and pass=?";
-		String result = null;
+		CustomerDTO user =null;
 		try (Connection con = DBUtil.getConnection(); PreparedStatement pstmt = con.prepareStatement(sql);) {
 			pstmt.setString(1, id);
 			pstmt.setString(2, pass);
+			//pk로 비교시 리턴값은 무조건 한개밖에 없다 고로 if처리
 			try (ResultSet rs = pstmt.executeQuery();) {
-				if (rs.next()) {
-					System.out.println("로그인성공");
-					result = rs.getString(1);
-				} else {
-					System.out.println("로그인실패");
+				if(rs.next()) {
+					user= new CustomerDTO(rs.getString(1), rs.getString(2), rs.getString(3),
+							rs.getString(4), rs.getDate(5));
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			return result;
+			return user;
 		}
 
 	}

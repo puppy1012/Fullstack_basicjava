@@ -1,0 +1,7 @@
+로그인시 사용자 정보를 리턴해서 출력 및 저장
+
+C	-	insert
+L	-	select(multi row)-반복(while)
+R	-	select(single row) -if
+U	-	update
+D	-	delete
